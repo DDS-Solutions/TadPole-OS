@@ -1,6 +1,16 @@
-# 🐸 Tadpole OS Engine
+<div align="center">
+  <img src=".github/assets/social-preview.png" width="800" alt="Tadpole OS - Sovereign Intelligence" />
 
-![CI](https://github.com/<owner>/tadpole-os/actions/workflows/ci.yml/badge.svg)
+  # 🐸 Tadpole OS Engine
+  **The high-performance, local-first runtime for sovereign multi-agent swarms.**
+
+  [![Rust](https://img.shields.io/badge/Rust-1.80+-zinc?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+  [![React](https://img.shields.io/badge/React-18.3-zinc?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+  [![Gemini](https://img.shields.io/badge/AI-Gemini%20Pro-emerald?style=for-the-badge&logo=google-gemini&logoColor=white)](https://ai.google.dev/)
+  [![License](https://img.shields.io/badge/License-MIT-zinc?style=for-the-badge)](LICENSE)
+  
+  ---
+</div>
 
 A high-performance, local-first **Tadpole OS** runtime. This engine provides a sovereign, secure, and hyper-efficient environment for complex multi-agent swarms, powered by **Rust** for mission-critical stability and peak performance.
 
