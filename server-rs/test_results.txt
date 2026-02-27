@@ -1,0 +1,93 @@
+warning: unused import: `crate::agent::types::ToolCall`
+ --> src\agent\hooks.rs:4:5
+  |
+4 | use crate::agent::types::ToolCall;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `std::path::PathBuf`
+   --> src\agent\tests.rs:222:9
+    |
+222 |     use std::path::PathBuf;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::path::PathBuf`
+   --> src\agent\tests.rs:245:9
+    |
+245 |     use std::path::PathBuf;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::path::PathBuf`
+   --> src\agent\tests.rs:264:9
+    |
+264 |     use std::path::PathBuf;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::path::PathBuf`
+ --> src\agent\tests_capabilities.rs:1:5
+  |
+1 | use std::path::PathBuf;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::env`
+ --> src\agent\tests_capabilities.rs:2:5
+  |
+2 | use std::env;
+  |     ^^^^^^^^
+
+warning: unused variable: `sanitized_filename`
+  --> src\agent\tests_capabilities.rs:31:9
+   |
+31 |     let sanitized_filename = weird_name.replace(|c: char| !c.is_alphanumeric() && c ...
+   |         ^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_sanitized_filename`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `server-rs` (bin "server-rs" test) generated 7 warnings (run `cargo fix --bin "server-rs" -p server-rs --tests` to apply 7 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src\main.rs (target\debug\deps\server_rs-9842eead330c2ba2.exe)
+
+running 26 tests
+test agent::rates::tests::test_calculate_cost_gpt4o ... ok
+test agent::rates::tests::test_calculate_cost_unknown ... ok
+test agent::rates::tests::test_calculate_cost_gemini ... ok
+test agent::groq::tests::test_groq_regex ... ok
+test agent::groq::tests::test_groq_regex_missing_bracket_with_curlies ... ok
+test agent::runner::tests::validate_input_allows_non_circular_lineage ... ok
+test agent::runner::tests::build_system_prompt_includes_lineage_when_present ... ok
+test agent::runner::tests::validate_input_detects_circular_recursion ... ok
+test agent::tests::test_filesystem_sandbox_blocks_traversal ... ok
+test agent::tests::test_database_persistence ... FAILED
+test agent::tests::test_filesystem_sandbox_blocks_absolute_paths ... ok
+test agent::tests::test_rate_limiter_active_with_limits ... ok
+test agent::tests::test_rate_limiter_rpm_only ... ok
+test agent::runner::tests::validate_input_enforces_depth_limit ... ok
+test agent::tests::test_rate_limiter_tpm_only ... ok
+test agent::tests::test_rate_limiter_unlimited_is_noop ... ok
+test agent::tests::test_swarm_recursion_logic ... ok
+test agent::runner::tests::validate_input_rejects_oversized_message ... ok
+test agent::runner::tests::build_system_prompt_includes_role_and_department ... ok
+test agent::tests::test_filesystem_sandbox_write_read ... ok
+test agent::tests::test_mission_logic ... ok
+test agent::runner::tests::validate_input_accepts_normal_message ... ok
+test agent::tests_capabilities::test_workflows_registry_save_and_delete ... ok
+test agent::tests_capabilities::test_capabilities_registry_save_and_sanitize ... ok
+test agent::runner::tests::test_finalize_run_fallback_on_empty_output ... ok
+test routes::agent::tests::test_create_agent_handler ... ok
+
+failures:
+
+---- agent::tests::test_database_persistence stdout ----
+Error: error returned from database: (code: 1) table agents has no column named model_2
+
+Caused by:
+    (code: 1) table agents has no column named model_2
+
+
+failures:
+    agent::tests::test_database_persistence
+
+test result: FAILED. 25 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+
+error: test failed, to rerun pass `--bin server-rs`

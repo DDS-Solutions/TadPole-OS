@@ -1,0 +1,80 @@
+    Checking server-rs v0.1.0 (C:\Users\Home Office_PC\.gemini\antigravity\playground\tadpole-os\server-rs)
+warning: unused import: `crate::agent::types::ToolCall`
+ --> src\agent\hooks.rs:4:5
+  |
+4 | use crate::agent::types::ToolCall;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `std::path::PathBuf`
+   --> src\agent\tests.rs:222:9
+    |
+222 |     use std::path::PathBuf;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::path::PathBuf`
+   --> src\agent\tests.rs:245:9
+    |
+245 |     use std::path::PathBuf;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::path::PathBuf`
+   --> src\agent\tests.rs:264:9
+    |
+264 |     use std::path::PathBuf;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::path::PathBuf`
+ --> src\agent\tests_capabilities.rs:1:5
+  |
+1 | use std::path::PathBuf;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::env`
+ --> src\agent\tests_capabilities.rs:2:5
+  |
+2 | use std::env;
+  |     ^^^^^^^^
+
+error[E0282]: type annotations needed
+   --> src\agent\runner.rs:659:17
+    |
+659 |                 Ok(None)
+    |                 ^^ cannot infer type of the type parameter `E` declared on the enum `Result`
+    |
+help: consider specifying the generic arguments
+    |
+659 |                 Ok::<std::option::Option<std::string::String>, E>(None)
+    |                   +++++++++++++++++++++++++++++++++++++++++++++++
+
+error[E0283]: type annotations needed
+   --> src\agent\runner.rs:659:17
+    |
+659 |                 Ok(None)
+    |                 ^^ cannot infer type of the type parameter `E` declared on the enum `Result`
+...
+723 |         Ok(result?)
+    |                  - type must be known at this point
+    |
+    = note: multiple `impl`s satisfying `anyhow::Error: From<_>` found in the following crates: `anyhow`, `core`:
+            - impl<E> From<E> for anyhow::Error
+              where E: StdError, E: std::marker::Send, E: Sync, E: 'static;
+            - impl<T> From<T> for T;
+help: consider specifying the generic arguments
+    |
+659 |                 Ok::<std::option::Option<std::string::String>, E>(None)
+    |                   +++++++++++++++++++++++++++++++++++++++++++++++
+
+warning: unused variable: `sanitized_filename`
+  --> src\agent\tests_capabilities.rs:31:9
+   |
+31 |     let sanitized_filename = weird_name.replace(|c: char| !c.is_alphanumeric() && c != '_' && c != '-', "_");
+   |         ^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_sanitized_filename`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+Some errors have detailed explanations: E0282, E0283.
+For more information about an error, try `rustc --explain E0282`.
+warning: `server-rs` (bin "server-rs" test) generated 7 warnings
+error: could not compile `server-rs` (bin "server-rs" test) due to 2 previous errors; 7 warnings emitted

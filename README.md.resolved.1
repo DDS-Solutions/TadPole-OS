@@ -1,0 +1,81 @@
+# 🐸 Tadpole OS Engine
+
+A local, self-hosted AI agent runtime built for **Tadpole OS**. This engine replaces external dependencies (like OpenClaw) with a lightweight, secure, and user-controlled implementation.
+
+## ✨ Features
+
+- **Local-First:** Runs entirely on your machine.
+- **Oversight Gate:** "Human-in-the-Loop" by default. All agent tool calls require manual approval.
+- **Self-Evolution:** Agents can read and modify their own source code (with your permission).
+- **Gemini Powered:** uses Google's Gemini 2.0 Flash for high-speed, low-latency reasoning.
+- **Hot Reload:** Automatically restarts when source code is modified.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- Google Gemini API Key
+
+### Installation
+
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **Configure Environment:**
+    Create a [.env](file:///C:/Users/Home%20Office_PC/.gemini/antigravity/brain/465cc492-80ff-4ba3-a4e3-5706db959613/Tadpole-OS/.env) file in `Tadpole-OS/` (see `.env.example` if available, or just add):
+    ```env
+    GOOGLE_API_KEY=your_api_key_here
+    PORT=8000
+    ```
+
+### Running the Engine
+
+Start the backend engine with hot-reload enabled:
+
+```bash
+npm run engine
+```
+
+The engine will start on `http://localhost:8000`.
+
+### Running the Dashboard
+
+In a separate terminal, start the frontend:
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173` (or the port shown in terminal) to access the Tadpole OS interface.
+
+## 🛡️ Oversight & Safety
+
+The **Oversight Gate** is the core safety mechanism.
+
+1.  When an agent wants to execute a tool (e.g., `shell`, `fs`, [fetch](file:///C:/Users/Home%20Office_PC/.gemini/antigravity/brain/465cc492-80ff-4ba3-a4e3-5706db959613/Tadpole-OS/src/pages/OversightDashboard.tsx#55-77)), it pauses.
+2.  The request appears in the **Oversight Dashboard**.
+3.  You must manually click **"Approve"** for the action to proceed.
+4.  If you **"Reject"**, the agent is notified and execution stops or retries.
+
+## 🧠 Architecture
+
+- **Gateway ([server/gateway.ts](file:///C:/Users/Home%20Office_PC/.gemini/antigravity/brain/465cc492-80ff-4ba3-a4e3-5706db959613/Tadpole-OS/server/gateway.ts)):** Express API + WebSocket server.
+- **Runner ([server/runner.ts](file:///C:/Users/Home%20Office_PC/.gemini/antigravity/brain/465cc492-80ff-4ba3-a4e3-5706db959613/Tadpole-OS/server/runner.ts)):** The main loop that manages Agent <-> LLM interaction.
+- **Skills (`server/skills/`):**
+    - `shell`: Execute terminal commands.
+    - `fs`: Read/Write files.
+    - [fetch](file:///C:/Users/Home%20Office_PC/.gemini/antigravity/brain/465cc492-80ff-4ba3-a4e3-5706db959613/Tadpole-OS/src/pages/OversightDashboard.tsx#55-77): HTTP requests.
+- **Provider ([server/providers/gemini.ts](file:///C:/Users/Home%20Office_PC/.gemini/antigravity/brain/465cc492-80ff-4ba3-a4e3-5706db959613/Tadpole-OS/server/providers/gemini.ts)):** Adapter for Google Generative AI.
+
+## 🧬 Self-Evolution
+
+The engine is designed to evolve. The agent has access to the `fs` skill and can be instructed to read `server/` files and propose edits.
+
+> **Note:** API Rate Limits apply. Google Gemini Free Tier allows ~15 requests/minute. Heavy evolution tasks may hit this limit.
+
+## 📜 License
+
+MIT

@@ -1,0 +1,294 @@
+/**
+ * @module engine/types
+ * Core type definitions for the Tadpole Engine.
+ */
+import { PROVIDERS } from './constants.js';
+
+/** Valid provider strings. */
+export type LLMProvider = typeof PROVIDERS[keyof typeof PROVIDERS];
+
+/** Configuration for an agent's model.
+ *  Kept in sync with Rust `ModelConfig` in `server-rs/src/agent/types.rs`.
+ */
+export interface ModelConfig {
+    provider: LLMProvider;
+    modelId: string;
+    temperature?: number;
+    maxTokens?: number;
+    apiKey?: string;
+    baseUrl?: string;
+    systemPrompt?: string;
+    /** External tracking ID for provider analytics (e.g., Helicone). */
+    externalId?: string;
+    rpm?: number;
+    rpd?: number;
+    tpm?: number;
+    tpd?: number;
+}
+
+/**
+ * Represents a message in the conversation history.
+ */
+export interface Message {
+    role: 'system' | 'user' | 'assistant' | 'tool';
+    content?: string;
+    name?: string;
+    tool_calls?: ToolCallFragment[];
+    tool_call_id?: string;
+}
+
+/**
+ * Partial tool call information as returned by the LLM.
+ */
+export interface ToolCallFragment {
+    id: string;
+    type: 'function';
+    function: {
+        name: string;
+        arguments: string; // JSON string
+    };
+}
+
+/**
+ * Definition of a tool available to the LLM.
+ */
+export interface ToolDefinition {
+    name: string;
+    description: string;
+    /** JSON Schema object describing the tool's parameters. */
+    parameters: Record<string, unknown>;
+}
+
+/** Interface for AI model providers (Gemini, OpenAI, Groq, etc.) */
+export interface ModelProvider {
+    /**
+     * Generates a response from the AI model.
+     * @param history The conversation history.
+     * @param message The current message from the user or agent.
+     * @param tools Optional list of tools available to the model.
+     * @returns A promise resolving to an object containing the text response,
+     *          an optional tool call, and token usage information.
+     */
+    generate(
+        history: Message[],
+        message: string,
+        tools?: ToolDefinition[]
+    ): Promise<{
+        text?: string;
+        toolCall?: { skill: string; params: any };
+        usage?: { inputTokens: number; outputTokens: number; totalTokens: number };
+    }>;
+}
+
+/** Represents an active agent in the engine. */
+export interface EngineAgent {
+    id: string;
+    name: string;
+    role: string;
+    department: string;
+    description: string;
+    model: ModelConfig;
+    status: AgentStatus;
+    skills: AgentSkillConfig[];
+    workspace: string; // Path to agent's workspace
+    tokensUsed: number;
+    tokenUsage: TokenUsage;
+    currentTask?: string;
+    activeWorkflow?: string;
+    themeColor?: string;
+}
+
+/** Configuration for a specific skill enabled for an agent. */
+export interface AgentSkillConfig {
+    skill: string; // e.g., "shell", "browser"
+    enabled: boolean;
+    config?: Record<string, any>;
+}
+
+/** Detailed token usage statistics. */
+export interface TokenUsage {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    totalCost: number;
+}
+
+/**
+ * Represents a formal mission assignment, used during delegation
+ * to prevent context drift and ensure operational alignment.
+ */
+export interface MissionBrief {
+    /** Unique ID for the mission. */
+    missionId: string;
+    /** The original high-level objective from the Alpha Node. */
+    primaryObjective: string;
+    /** Hard constraints (budgets, security rules, restricted assets). */
+    constraints: string[];
+    /** Quantitative or qualitative markers for success. */
+    successCriteria: string[];
+    /** Any sensitive data or temporary access tokens needed for the mission. */
+    contextVault?: Record<string, any>;
+    /** ISO timestamp of when the mission was commissioned. */
+    createdAt: string;
+}
+
+/** A requested tool execution from the LLM. */
+export interface ToolCall {
+    id: string;
+    agentId: string;
+    department: string;
+    /** Optional identifier for the mission cluster that triggered this tool call. */
+    clusterId?: string;
+    skill: string;
+    description: string;
+    params: any;
+    timestamp: string;
+}
+
+/** Possible decisions for a tool call. */
+export type OversightDecision = 'pending' | 'approved' | 'rejected' | 'failed';
+
+/** An entry in the oversight queue awaiting decision. */
+export interface OversightEntry {
+    id: string;
+    toolCall: ToolCall;
+    status: OversightDecision;
+    createdAt: string;
+}
+
+/** A recorded action in the oversight ledger. */
+export interface LedgerEntry {
+    id: string;
+    toolCall: ToolCall;
+    decision: 'approved' | 'rejected';
+    result?: ToolResult;
+    timestamp: string;
+}
+
+/**
+ * RFC 9457 (Problem Details for HTTP APIs)
+ * Provides a standardized structure for machine-readable error responses.
+ */
+export interface ProblemDetails {
+    /** A URI reference that identifies the problem type. */
+    type: string;
+    /** A short, human-readable summary of the problem. */
+    title: string;
+    /** The HTTP status code generated by the origin server. */
+    status: number;
+    /** A human-readable explanation specific to this occurrence. */
+    detail?: string;
+    /** A URI reference that identifies the specific occurrence of the problem. */
+    instance?: string;
+    /** Extension members for additional context. */
+    [key: string]: any;
+}
+
+/**
+ * Defines the signature for a broadcast function used to send events
+ * to connected WebSocket clients.
+ * @param event The event object to broadcast.
+ */
+export type BroadcastFn = (event: EngineEvent) => void;
+
+/** Broadcast events for WebSockets. */
+export type EngineEvent =
+    | { type: 'agent:status'; agentId: string; status: AgentStatus }
+    | { type: 'agent:update'; agentId: string; data: Partial<EngineAgent> }
+    | { type: 'agent:message'; agentId: string; text: string }
+    | { type: 'agent:tool'; agentId: string; toolCall: ToolCall }
+    | { type: 'oversight:new'; entry: OversightEntry }
+    | { type: 'oversight:update'; entry: OversightEntry }
+    | { type: 'oversight:decided'; entry: { id: string; decision: OversightDecision; decidedBy: string; decidedAt: string } }
+    | { type: 'ledger:entry'; entry: LedgerEntry }
+    /** Fired when an Alpha node delegates a task to another cluster. */
+    | { type: 'agent:handoff'; sourceClusterId: string; targetClusterId: string; brief: MissionBrief }
+    /** Temporal telemetry for the Timeline view. */
+    | { type: 'agent:telemetry'; agentId: string; phase: 'thinking' | 'executing' | 'finalizing'; timestamp: string; details?: string }
+    /** High-frequency engine health broadcast (Neural Pulse). */
+    | {
+        type: 'engine:health';
+        uptime: number;
+        agents: number;
+        /** CPU load percentage (0-100). */
+        cpu?: number;
+        /** Memory usage in MB. */
+        memoryMB?: number;
+        /** Internal engine processing latency in ms. */
+        latencyMs?: number
+    }
+    | { type: 'engine:killed'; reason: string };
+
+export interface ToolResult {
+    success: boolean;
+    /** Standardized result string for tests ('success' | 'failed') */
+    result?: 'success' | 'failed';
+    output?: any;
+    error?: string;
+    durationMs?: number;
+}
+
+export interface SkillContext {
+    agent: EngineAgent;
+    clusterId?: string;
+    /** Call another tool within the same execution context. */
+    callTool: (name: string, params: any) => Promise<ToolResult>;
+}
+
+export interface Skill<T = any> {
+    name: string;
+    description: string;
+    /** Intent tags help AI systems discover the right tool for a goal. */
+    intent_tags?: string[];
+    schema: any; // JSON Schema for the tool parameters
+    execute(params: T, context: SkillContext): Promise<ToolResult>;
+}
+
+export type AgentStatus = 'idle' | 'working' | 'active' | 'thinking' | 'speaking' | 'coding' | 'paused' | 'offline';
+
+export interface RunnerResult {
+    success: boolean;
+    output?: string;
+    error?: {
+        code: 'RATE_LIMIT' | 'CONFIG_ERROR' | 'RUNTIME_ERROR' | 'OVERSIGHT_REJECTION' | 'ABORTED';
+        message: string;
+        details?: any;
+    };
+}
+
+/**
+ * Configuration updates for an agent (Backend).
+ */
+export interface AgentConfig {
+    name?: string;
+    role?: string;
+    department?: string;
+    description?: string;
+    modelId?: string;
+    provider?: string;
+    apiKey?: string;
+    baseUrl?: string;
+    systemPrompt?: string;
+    temperature?: number;
+    skills?: string[];
+    [key: string]: any;
+}
+
+/**
+ * Payload for sending a command/task to an agent (Backend).
+ */
+export interface TaskPayload {
+    message: string;
+    clusterId?: string;
+    department?: string;
+    provider?: string;
+    modelId?: string;
+    apiKey?: string;
+    baseUrl?: string;
+    rpm?: number;
+    tpm?: number;
+    rpd?: number;
+    tpd?: number;
+    [key: string]: any;
+}
+

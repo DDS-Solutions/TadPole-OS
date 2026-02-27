@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zinc-950 text-zinc-100 font-sans antialiased;
+  }
+}
+
+:root, [data-theme="zinc"] {
+  font-family: 'Inter', system-ui, sans-serif;
+  --color-theme-50: #fafafa;
+  --color-theme-100: #f4f4f5;
+  --color-theme-200: #e4e4e7;
+  --color-theme-300: #d4d4d8;
+  --color-theme-400: #a1a1aa;
+  --color-theme-500: #71717a;
+  --color-theme-600: #52525b;
+  --color-theme-700: #3f3f46;
+  --color-theme-800: #27272a;
+  --color-theme-900: #18181b;
+  --color-theme-950: #09090b;
+}
+
+[data-theme="slate"] {
+  --color-theme-50: #f8fafc;
+  --color-theme-100: #f1f5f9;
+  --color-theme-200: #e2e8f0;
+  --color-theme-300: #cbd5e1;
+  --color-theme-400: #94a3b8;
+  --color-theme-500: #64748b;
+  --color-theme-600: #475569;
+  --color-theme-700: #334155;
+  --color-theme-800: #1e293b;
+  --color-theme-900: #0f172a;
+  --color-theme-950: #020617;
+}
+
+[data-theme="neutral"] {
+  --color-theme-50: #fafafa;
+  --color-theme-100: #f5f5f5;
+  --color-theme-200: #e5e5e5;
+  --color-theme-300: #d4d4d4;
+  --color-theme-400: #a3a3a3;
+  --color-theme-500: #737373;
+  --color-theme-600: #525252;
+  --color-theme-700: #404040;
+  --color-theme-800: #262626;
+  --color-theme-900: #171717;
+  --color-theme-950: #0a0a0a;
+}
+
+html[data-density="compact"] {
+  font-size: 14px;
+}
+
+html[data-density="comfortable"] {
+  font-size: 16px;
+}
+
+/* Custom Scrollbar to match "Tadpole OS" sleek look */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #27272a;
+  /* zinc-800 */
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+  /* zinc-700 */
+}
+
+/* Hide scrollbar for cleaner horizontal scrolling but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes neural-pulse {
+  0% {
+    stroke-width: 1;
+    opacity: 0.3;
+    filter: drop-shadow(0 0 0px currentColor);
+  }
+  50% {
+    stroke-width: 2;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+  100% {
+    stroke-width: 1;
+    opacity: 0.3;
+    filter: drop-shadow(0 0 0px currentColor);
+  }
+}
+
+.neural-pulse {
+  animation: neural-pulse 2s infinite ease-in-out;
+}
+
+@keyframes vertical-pulse {
+  0% {
+    opacity: 0.2;
+    box-shadow: 0 0 0px currentColor;
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 8px currentColor;
+  }
+  100% {
+    opacity: 0.2;
+    box-shadow: 0 0 0px currentColor;
+  }
+}
+
+.vertical-pulse {
+  animation: vertical-pulse 2s infinite ease-in-out;
+}
+
+.neural-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Premium card container layout for consistent dashboard sizing */
+.agent-grid-item {
+  @apply w-full max-w-[360px] mx-auto transition-all duration-300;
+}

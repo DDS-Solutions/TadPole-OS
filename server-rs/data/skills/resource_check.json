@@ -1,0 +1,17 @@
+{
+  "name": "resource_check",
+  "description": "Auto-migrated skill: Resource Check",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "input": {
+        "type": "string",
+        "description": "Input for Resource Check"
+      }
+    },
+    "required": [
+      "input"
+    ]
+  },
+  "execution_command": "echo \"Simulated execution of Resource Check\""
+}

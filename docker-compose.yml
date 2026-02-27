@@ -1,0 +1,29 @@
+services:
+  tadpole:
+    build: .
+    container_name: tadpole-os
+    # SECURE BINDING: 
+    # Tailscale entirely restricts access to this machine. We bind to 0.0.0.0 so that 
+    # the Windows PC can connect; SSH rebuilds were stripping the volatile TAILSCALE_IP env var.
+    ports:
+      - "0.0.0.0:8000:8000"
+      - "0.0.0.0:5173:5173"
+    environment:
+      # Inject necessary environment variables into the container
+      - NEURAL_TOKEN=${NEURAL_TOKEN:-tadpole-dev-token-2026}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-}
+      - DATABASE_URL=sqlite:///app/data/tadpole.db
+    volumes:
+      # Mount the workspaces directory
+      - ./workspaces:/app/workspaces
+      # Persist the SQLite database in a data directory
+      - ./server-rs/data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-sf", "http://localhost:8000/engine/health" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
